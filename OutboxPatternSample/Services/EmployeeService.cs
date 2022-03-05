@@ -1,5 +1,7 @@
 ﻿using OutboxPatternSample.Domain;
 using OutboxPatternSample.Dto;
+using OutboxPatternSample.IntegrationEvents;
+using System.Text.Json;
 
 namespace OutboxPatternSample.Services
 {
@@ -18,10 +20,17 @@ namespace OutboxPatternSample.Services
         {
             Employee employee = new Employee(Guid.NewGuid(),
                 employeeDto.Name, employeeDto.Email);
+
+
+            OutboxMessage outboxMessage = new OutboxMessage(Guid.NewGuid(), DateTime.Now, nameof(EmployeeCreatedEvent),
+                JsonSerializer.Serialize(new EmployeeCreatedEvent { Name = employee.Name, Email = employee.Email }));
             _context.Add(employee);
+            _context.Add(outboxMessage);
+
+
             await _context.SaveChangesAsync();
-            await _emailService.SendEmailAsync(employee.Email, "Welcome onboard"
-                , $"It's great to work with us {employee.Name}");
+
+           
         }
     }
 }

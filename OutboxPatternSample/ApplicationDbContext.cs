@@ -9,6 +9,7 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Employee>().HasKey(c=> c.Id);
+        modelBuilder.Entity<OutboxMessage>().HasKey(c=> c.Id);
         base.OnModelCreating(modelBuilder);
     }
 }
