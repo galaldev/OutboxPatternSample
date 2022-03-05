@@ -1,0 +1,33 @@
+﻿@using OutboxPatternSample.Dto
+@using OutboxPatternSample.Services
+@inject EmployeeService _employeeService
+@page "/"
+<h1>Add Employee</h1>
+
+<EditForm Model="_empoyeeDto" OnValidSubmit="Submit">
+    <ValidationSummary></ValidationSummary>
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+         <div class="form-group">
+            <label for="exampleInputEmail1">Name</label>
+            <InputText @bind-Value="_empoyeeDto.Name" type="text" class="form-control" />
+        </div>
+         <div class="form-group">
+            <label for="exampleInputEmail1">Email address</label>
+            <InputText  @bind-Value="_empoyeeDto.Email" type="email" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+
+@code {
+    EmployeeDto _empoyeeDto = new EmployeeDto();
+
+    private async Task Submit()
+    {
+        await _employeeService.AddEmployee(_empoyeeDto);
+        _empoyeeDto.Email = "";
+        _empoyeeDto.Name = "";
+        StateHasChanged();
+
+    }
+}
