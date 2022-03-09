@@ -13,7 +13,9 @@ namespace OutboxPatternSample.Services
         private readonly EmailService _emailService;
         private readonly ApplicationDbContext _context;
 
-        public SendEmailsJob(ILogger<SendEmailsJob> logger, EmailService emailService, ApplicationDbContext context)
+        public SendEmailsJob(ILogger<SendEmailsJob> logger
+            , EmailService emailService
+            , ApplicationDbContext context)
         {
             _logger = logger;
             _emailService = emailService;
@@ -24,12 +26,13 @@ namespace OutboxPatternSample.Services
         {
             _logger.LogInformation("Check messages!");
             var messages = await _context.Set<OutboxMessage>()
-                .Where(c => c.Type == nameof(EmployeeCreatedEvent) && c.IsProcessed == false).ToListAsync();
+                .Where(c => c.Type == nameof(EmployeeCreatedEvent) 
+                            && c.IsProcessed == false).OrderBy(c=> c.Data).ToListAsync();
             foreach (var message in messages)
             {
                 var data = JsonSerializer.Deserialize<EmployeeCreatedEvent>(message.Data);
                 _logger.LogInformation($"Sending to {data.Email}!");
-                await _emailService.SendEmailAsync(data.Email, "Welcome onboard"
+                await _emailService.SendEmailAsync(data.Email, "Welcome on-board"
                     , $"It's great to work with us {data.Name}");
 
                 message.MarkAsProcessed(DateTime.Now);
