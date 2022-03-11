@@ -22,7 +22,8 @@ namespace OutboxPatternSample.Services
                 employeeDto.Name, employeeDto.Email);
 
 
-            OutboxMessage outboxMessage = new OutboxMessage(Guid.NewGuid(), DateTime.Now, nameof(EmployeeCreatedEvent),
+            OutboxMessage outboxMessage = new OutboxMessage(Guid.NewGuid(),
+                DateTime.Now, nameof(EmployeeCreatedEvent),
                 JsonSerializer.Serialize(new EmployeeCreatedEvent { Name = employee.Name, Email = employee.Email }));
             _context.Add(employee);
             _context.Add(outboxMessage);
